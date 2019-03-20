@@ -22,4 +22,4 @@ for trigram in trigrams:
 sort_frequencies = sorted(trigram_frequency.items(), key=lambda x: x[1], reverse=True)
 
 for entry in sort_frequencies:
-    print(entry[0]+"\t"+str(entry[1]))
+    print(entry[0],str(entry[1]))
