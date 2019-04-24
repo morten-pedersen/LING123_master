@@ -15,7 +15,7 @@ text = list(
 # make a match list
 # ie. if PUNCT and (then)NOUN add it, else pass. 
 text_freq = list()
-# previous_tupl = None
+previous_tupl = None
 for tupl in text:
     if tupl[1] in noun and previous_tupl and previous_tupl[1] in punctuation:
             text_freq.append((previous_tupl,tupl))

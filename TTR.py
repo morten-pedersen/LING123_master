@@ -10,6 +10,7 @@ text = file_in.read()
 
 file_in.close()
 
+text = text.rstrip()
 text = text.split()
 
 # tokens are the length of the text list, 
