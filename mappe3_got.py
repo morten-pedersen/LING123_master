@@ -51,10 +51,10 @@ final_html = (f"""
     -->
     <html lang="en">
         <head>
-        <meta charset="utf-8">
-        <style>
-            {css}
-        </style>
+            <meta charset="utf-8">
+            <style>
+                {css}
+            </style>
         </head>
         <body>
             <h1>{h1}</h1>
