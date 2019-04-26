@@ -38,6 +38,9 @@ css = """
         color:red;
         font-style:italic;
     }
+    ul {
+        list-style-type: square;
+    }
 """
 
 # variable containing a multiline string with all the content from the other variables
