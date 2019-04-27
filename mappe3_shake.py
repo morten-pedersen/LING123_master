@@ -8,8 +8,10 @@ file.close()
 
 poem = readfile.split("\n")
 
+linecount = 0
 
-
+for lines in poem:
+    linecount+=1
 
 
 A_index = [0,1,7,8,14,15,21,22]
@@ -36,7 +38,7 @@ token_start_xml = "<token>"
 token_end_xml = "</token>"
 
 stanza = ""
-poem_final = ""
+poem_final = "" 
 
 for sentence in poem:
     # print(poem.index(sentence))
