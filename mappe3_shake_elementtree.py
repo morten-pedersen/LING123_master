@@ -47,9 +47,9 @@ for line_count, lines in enumerate(poem_lines):
     elif line_count in C_index:
         C_dict.setdefault('C', []).append(lines)
 
-print(A_dict)
-print(B_dict)
-print(C_dict)
+# print(A_dict)
+# print(B_dict)
+# print(C_dict)
 
 
 # print(f"""
@@ -58,7 +58,10 @@ print(C_dict)
 # C: {C_words}
 # """)
 
+# print(A_dict.values())
 
+# for key, values in A_dict.items():
+#     print(key, values)
 
 poem = et.Element("poem")
 for stanzanumber, stanzas in enumerate(stanza_lists,1):
@@ -69,16 +72,21 @@ for stanzanumber, stanzas in enumerate(stanza_lists,1):
         token = et.SubElement(stanza, "token")
         token.set("t-id", (f"""{stanzanumber}-{token_number}"""))
         wordform = et.SubElement(token, "wordform")
-        wordform.text = token_word
+        wordform.text = token_word        
         rhyme = et.SubElement(token, "rhyme")
-        rhyme.text(rhyme_text)
+        if token_word in A_dict.values():
+            rhyme.text = "A"
+        elif token_word in B_dict.values():
+            rhyme.text = "B"
+        elif token_word in C_dict.values():
+            rhyme.text = "C"
 
 tree = et.ElementTree(poem)
 
 tree.write("shake.xml")
 
-root = tree.getroot()
+# root = tree.getroot()
 
-xmlstr = xml.parseString(et.tostring(root)).toprettyxml(indent = "  ")
-with open("shake.xml", "wb") as f:
-    f.write(xmlstr)
+# xmlstr = xml.parseString(et.tostring(root)).toprettyxml(indent = "  ")
+# with open("shake.xml", "wb") as f:
+#     f.write(xmlstr)
