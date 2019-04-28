@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as et
 import xml.dom.minidom as xml
+import re
 
 file = open("shake.txt", mode="r", encoding="utf-8")
 
@@ -7,62 +8,77 @@ readfile = file.read()
 
 file.close()
 
-poem_stanzas = readfile.split("\n\n")
 poem_lines = readfile.split("\n")
-poem_words = readfile.split()
+# poem_lines = re.sub("\'\', ", "", str(poem_lines))
+# print(poem_lines)
 
-for stanzanumber, stanzas in enumerate(poem_stanzas,1):
-    print(stanzanumber,stanzas)
+stanzalist = []
 
-Stanza1_index = list(range(1,7))
-Stanza2_index = list(range(8-14))
-Stanza3_index = list(range(15-21))
-Stanza4_index = list(range(22-27))
+for stanzass in readfile.split("\n\n"):
+    stanzalist.append(stanzass)
 
-Stanza1 = []
-Stanza2 = []
-Stanza3 = []
-Stanza4 = []
+# print(stanzalist)
+
+stanza_lists = []
+
+for stanzas in stanzalist:
+    word_split = stanzas.split()
+    stanza_lists.append(word_split)
 
 
+A_index = [0,1,7,8,14,15,21,22]
+B_index = [2,5,9,12,16,19,23,26]
+C_index = [3,4,10,11,17,18,24,25]
 
-# for line_number, lines in enumerate(poem_lines,1):
-#     print(line_number, lines)
-#     if line_number in Stanza1_index:
-#         Stanza1.append(lines)
-#     elif line_number in Stanza2_index:
-#         Stanza2.append(lines)
-#     elif line_number in Stanza3_index:
-#         Stanza3.append(lines)
-#     elif line_number in Stanza4_index:
-#         Stanza4.append(lines)
+A_words = []
+B_words = []
+C_words = []
 
-# for word_number, words in enumerate(poem_words,1):
-#     print(word_number,words)
+A_dict = {}
+B_dict = {}
+C_dict = {}
+
+for line_count, lines in enumerate(poem_lines):
+    lines = lines.split()
+    if line_count in A_index:
+        A_dict.setdefault('A', []).append(lines)
+    elif line_count in B_index:
+        B_dict.setdefault('B', []).append(lines)
+    elif line_count in C_index:
+        C_dict.setdefault('C', []).append(lines)
+
+print(A_dict)
+print(B_dict)
+print(C_dict)
+
 
 # print(f"""
-# Stanza1: {Stanza1}
-# Stanza2: {Stanza2}
-# Stanza3: {Stanza3}
-# Stanza4: {Stanza4}
+# A: {A_words}
+# B: {B_words}
+# C: {C_words}
 # """)
 
-# print(poem_words)
 
 
-# stanza_id = "2"
-# token_id = "2-25"
-# wordform_text = "Birds"
-# rhyme_text = "A"
+poem = et.Element("poem")
+for stanzanumber, stanzas in enumerate(stanza_lists,1):
+    stanza = et.SubElement(poem, "stanza")
+    stanza.set("s-id", str(stanzanumber))
+    for token_number, token_word in enumerate(stanzas,1):
+        # print(token_word)
+        token = et.SubElement(stanza, "token")
+        token.set("t-id", (f"""{stanzanumber}-{token_number}"""))
+        wordform = et.SubElement(token, "wordform")
+        wordform.text = token_word
+        rhyme = et.SubElement(token, "rhyme")
+        rhyme.text(rhyme_text)
 
-# poem = et.Element("poem")
-# stanza = et.SubElement(poem, "stanza")
-# stanza.set("s-id", stanza_id)
-# token = et.SubElement(stanza, "token")
-# token.set("t-id", token_id)
-# wordform = et.SubElement(token, "wordform")
-# wordform.text(wordform_text)
-# rhyme = et.SubElement(token, "rhyme")
-# rhyme.text(rhyme_text)
+tree = et.ElementTree(poem)
 
-# print(poem)
+tree.write("shake.xml")
+
+root = tree.getroot()
+
+xmlstr = xml.parseString(et.tostring(root)).toprettyxml(indent = "  ")
+with open("shake.xml", "wb") as f:
+    f.write(xmlstr)
