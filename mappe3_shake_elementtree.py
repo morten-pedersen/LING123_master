@@ -3,10 +3,13 @@ import xml.dom.minidom as xml
 import re
 
 file = open("shake.txt", mode="r", encoding="utf-8")
-
 readfile = file.read()
-
 file.close()
+
+xml_declaration = """
+<?xml version="1.0" encoding="UTF-8"
+standalone="yes"?>
+"""
 
 dtd = """
 <!DOCTYPE poem [
@@ -19,129 +22,85 @@ dtd = """
 <!ELEMENT rhyme (#PCDATA) >
 ]"""
 
-poem_lines = readfile.split("\n")
-poem_lines = re.sub("\'\', ", "", str(poem_lines))
-# print(poem_lines)
-
+# several loops to divide the text into sublists so we can count stanzas, lines and words
 stanzalist = []
-
-for stanzass in readfile.split("\n\n"):
-    stanzalist.append(stanzass)
-
-# print(stanzalist)
+for stanzas_ in readfile.split("\n\n"):
+    stanzalist.append(stanzas_)
 
 stanza_lists = []
-
 for stanzas in stanzalist:
-    word_split = stanzas.split()
+    word_split = stanzas.split("\n")
     stanza_lists.append(word_split)
 
-text = []
-for line in readfile.split('\n'):
-  sentences = []
-  for sentence in line.split('.'):
-    words = []
-    for word in sentence.split(' '):
-      if len(word.strip()) > 0: # make sure we are adding something
-        words.append(word.strip())
-    if len(words) > 0:
-      sentences.append(words)
-  if len(sentences) > 0:
-    text.append(sentences)
+final_list = []
+for lines in stanza_lists:
+    for words in lines:
+        splittt = words.split()
+        final_list.append(splittt)
 
-# print(text)
+# divides lines into stanzas if in 6th position
+final_list = [final_list[i:i + 6] for i in range(0,len(final_list), 6)]
 
-A_index = [0,1,6,7,12,13,18,19]
-B_index = [2,5,8,11,14,17,20,23]
-C_index = [3,4,9,10,15,16,21,22]
-
-A_words = []
-B_words = []
-C_words = []
-
-A_dict = {}
-B_dict = {}
-C_dict = {}
-
-# for line_count, lines in enumerate(poem_lines):
-#     lines = lines.split()
-#     if line_count in A_index:
-#         A_dict.setdefault('A', []).append(lines)
-#         # A_words.append(lines)
-#     elif line_count in B_index:
-#         B_dict.setdefault('B', []).append(lines)
-#         # B_words.append(lines)
-#     elif line_count in C_index:
-#         C_dict.setdefault('C', []).append(lines)
-#         # C_words.append(lines)
-
-# print(A_dict)
-# print(B_dict)
-# print(C_dict)
+# empty token counters
+first_word_counter = 0
+second_word_counter = 0
+third_word_counter = 0
+fourth_word_counter = 0
 
 
-# print(f"""
-# A: {A_words}
-# B: {B_words}
-# C: {C_words}
-# """)
-
-# print(A_dict.values())
-
-# for key, values in A_dict.items():
-#     print(key, values)
-
-# print(type(A_dict.values()))
-
-flat_a = [item for sublist in A_words for item in sublist]
-flat_b = [item for sublist in B_words for item in sublist]
-flat_c = [item for sublist in C_words for item in sublist]
-
-# print(poem_lines.spl)
-
-
-
-poem = et.Element("poem")
-for stanzanumber, stanzas in enumerate(stanza_lists,1):
-    stanza = et.SubElement(poem, "stanza")
-    stanza.set("s-id", str(stanzanumber))
-    for token_number, token_word in enumerate(stanzas,1):
-        # print(token_word)
-        token = et.SubElement(stanza, "token")
-        token.set("t-id", (f"""{stanzanumber}-{token_number}"""))
-        wordform = et.SubElement(token, "wordform")
-        wordform.text = token_word        
-        rhyme = et.SubElement(token, "rhyme")
-        for line_count, lines in enumerate(text):
-            # print(line_count, lines)
-            if line_count in A_index:
-                # print(line_count, "A")
-                rhyme.text = "A"
-            elif line_count in B_index:
-                # print(line_count, "B")
-                rhyme.text = "B"
-            elif line_count in C_index:
-                # print(line_count, "C")
-                rhyme.text = "C"
-                
-        # if token_word in A_dict.values():
-        #     rhyme.text = str(A_dict.keys())
-        # elif token_word in B_dict.values():
-        #     rhyme.text = str(B_dict.keys())
-        # elif token_word in C_dict.values():
-        #     rhyme.text = str(C_dict.keys())
-
-
+# using ElementTree we can set elements, subelements, their text elements and/or attributes using nested loops.
+# enumerate() is important here so that we know which stanza and line we are on
+poem = et.Element("poem") # root element "poem"
+for stanzanumber, stanzas in enumerate(final_list,1):
+        stanza = et.SubElement(poem, "stanza") # creates subelements stanza
+        stanza.set("s-id", str(stanzanumber)) # gives the stanza elements an s-id attribute with number based on the enumeration
+        for line_number, line in enumerate(stanzas,1): # looping through lines in stanzas, to identify which rhyme they belong to
+            # looping further to get tokens. 
+            # creates subelements depending on which stanza the word is in, and also counts the token for each stanza
+            for token_number, token_word in enumerate(line,1): 
+                if stanzanumber == 1:
+                    first_word_counter += 1
+                    token = et.SubElement(stanza, "token")
+                    token.set("t-id", (f"""{stanzanumber}-{first_word_counter}"""))
+                elif stanzanumber == 2:
+                    second_word_counter += 1
+                    token = et.SubElement(stanza, "token")
+                    token.set("t-id", (f"""{stanzanumber}-{second_word_counter}"""))
+                elif stanzanumber == 3:
+                    third_word_counter += 1
+                    token = et.SubElement(stanza, "token")
+                    token.set("t-id", (f"""{stanzanumber}-{third_word_counter}"""))
+                elif stanzanumber == 4:
+                    fourth_word_counter += 1
+                    token = et.SubElement(stanza, "token")
+                    token.set("t-id", (f"""{stanzanumber}-{fourth_word_counter}"""))    
+                # creates the subelement wordform            
+                wordform = et.SubElement(token, "wordform")
+                wordform.text = token_word      
+                # since we know that the poem is a sestain with the rhyme scheme of AABCCB, we can assign
+                # the rhyme element depending on the current line from enumerate
+                rhyme = et.SubElement(token, "rhyme")
+                if line_number == 1 or line_number == 2:
+                    rhyme.text = "A"
+                elif line_number == 3 or line_number == 6:
+                    rhyme.text = "B"
+                elif line_number == 4 or line_number == 5:
+                    rhyme.text = "C"
+            
+# creates the element root tree from the first element, <poem>
 tree = et.ElementTree(poem)
-
-# tree.write("shake.xml")
-
 root = tree.getroot()
 
-xmlstr = xml.parseString(et.tostring(root)).toprettyxml(indent = "  ")
-# with open("shake.xml", "w") as f:
-#     f.write(xmlstr)
+# the XML minidom creates a "pretty" XML string, which we can then send to a variable
+xmlstr = xml.parseString(et.tostring(root,encoding="UTF-8")).toprettyxml(indent = "  ")
+# using regex to remove the automatic XML declaration injected by etree so we can instead put it at the top where it should be
+xmlstring=re.sub("\\<\\?xml(.+?)\\?\\>", "", xmlstr)
 
-print(f"""{dtd}
 
-{xmlstr}""")
+# prints the XML declaration, DTD and the XML string
+print(f"""
+{xml_declaration}
+{dtd}
+
+{xmlstring}
+""")

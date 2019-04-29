@@ -1,1 +1,3 @@
-print(poem_lines)
+
+
+{xmlstr}""")
