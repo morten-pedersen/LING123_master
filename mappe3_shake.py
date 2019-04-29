@@ -93,14 +93,14 @@ for sentence in poem:
 # </poem>
 
 
-# <!DOCTYPE poem [
-# <!ELEMENT poem (stanza+) >
-# <!ELEMENT stanza (token+) >
-# <!ATTLIST stanza s-id CDATA #REQUIRED >
-# <!ELEMENT token (wordform,rhyme) >
-# <!ATTLIST token t-id CDATA #REQUIRED >
-# <!ELEMENT wordform (#PCDATA) >
-# <!ELEMENT rhyme (#PCDATA) >
-# ]
+<!DOCTYPE poem [
+<!ELEMENT poem (stanza+) >
+<!ELEMENT stanza (token+) >
+<!ATTLIST stanza s-id CDATA #REQUIRED >
+<!ELEMENT token (wordform,rhyme) >
+<!ATTLIST token t-id CDATA #REQUIRED >
+<!ELEMENT wordform (#PCDATA) >
+<!ELEMENT rhyme (#PCDATA) >
+]
 
 # #AABCCB
